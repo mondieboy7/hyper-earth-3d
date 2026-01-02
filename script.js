@@ -1,41 +1,56 @@
-// 1. Paste your NEW token from Cesium Ion here
-Cesium.Ion.defaultAccessToken = ' eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJmYmFlZjdlZi02MzIzLTQ0OWMtODMzMC04MGI3NzJhYThiNTEiLCJpZCI6MzczOTE1LCJpYXQiOjE3NjczNjg1Mzh9.HKuHB8Jo23qBWTaoBopHWTE4qC-e9OGRbuHJi1tC4fU';
+// 1. YOUR ION TOKEN
+Cesium.Ion.defaultAccessToken = 'YOUR_ACTUAL_TOKEN_HERE';
 
-// 2. Setup the Earth Viewer
+// 2. INITIALIZE VIEWER WITH HIGH GRAPHICS
 const viewer = new Cesium.Viewer("cesiumContainer", {
   timeline: false,
   animation: false,
   sceneModePicker: false,
   baseLayerPicker: false,
-  geocoder: true, 
-  globe: false, // This must be false for Google 3D tiles to work
+  geocoder: true,
+  globe: false, 
+  // High-end rendering settings
+  msaaSamples: 4, // Smoother edges (Anti-aliasing)
 });
 
-// 3. Load the 3D Buildings
+// 3. IMPROVE LIGHTING & ATMOSPHERE
+viewer.scene.skyAtmosphere.show = true; // Adds the blue horizon
+viewer.scene.fog.enabled = true; // Adds depth to the distance
+viewer.scene.fog.density = 0.0002;
+viewer.scene.highDynamicRange = true; // Better colors/brightness
+
+// 4. ADD THE CLOUD LAYER
+const cloudLayer = viewer.scene.primitives.add(new Cesium.CloudCollection());
+for (let i = 0; i < 50; i++) {
+    cloudLayer.add({
+        position: Cesium.Cartesian3.fromDegrees(-122.084, 37.422, 1000 + (i * 100)), // Near Googleplex
+        maximumSize: new Cesium.Cartesian2(800.0, 500.0),
+        slice: 0.5,
+    });
+}
+
+// 5. LOAD TILES
 async function startApp() {
   try {
-    // This connects to the Google Photorealistic 3D Tiles
     const tileset = await Cesium.createGooglePhotorealistic3DTileset();
     viewer.scene.primitives.add(tileset);
 
-    // Hide the "Preparing" message once loaded
     const loader = document.getElementById('loadingOverlay');
     if (loader) loader.style.display = 'none';
 
   } catch (error) {
-    console.error("Error:", error);
-    document.getElementById('loadingOverlay').innerHTML = "<h1>Error: Make sure you added Google Tiles to My Assets in Cesium Ion</h1>";
+    console.error(error);
   }
 }
 
 startApp();
 
-// 4. Zoom the camera to the Googleplex
+// 6. BETTER STARTING CAMERA (Tilted view)
 viewer.scene.camera.setView({
   destination: new Cesium.Cartesian3(-2693797, -4297135, 3854700),
   orientation: {
     heading: 4.65,
-    pitch: -0.28,
+    pitch: -0.3, // Tilted down to see the horizon
     roll: 0
   }
 });
