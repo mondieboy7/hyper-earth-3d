@@ -7,7 +7,7 @@ const viewer = new Cesium.Viewer("cesiumContainer", {
   animation: false,
   sceneModePicker: false,
   baseLayerPicker: false,
-  geocoder: Cesium.IonGeocodeProviderType.GOOGLE,
+  geocoder: geocoder: Cesium.GeocodeProviderType.GOOGLE,
   globe: false, // Required for Photorealistic Tiles to look right
 });
 
