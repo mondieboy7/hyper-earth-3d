@@ -1,5 +1,5 @@
 // 1. YOUR ION TOKEN
-Cesium.Ion.defaultAccessToken = 'YOUR_ACTUAL_TOKEN_HERE';
+Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJmYmFlZjdlZi02MzIzLTQ0OWMtODMzMC04MGI3NzJhYThiNTEiLCJpZCI6MzczOTE1LCJpYXQiOjE3NjczNjg1Mzh9.HKuHB8Jo23qBWTaoBopHWTE4qC-e9OGRbuHJi1tC4fU';
 
 // 2. INITIALIZE VIEWER WITH HIGH GRAPHICS
 const viewer = new Cesium.Viewer("cesiumContainer", {
