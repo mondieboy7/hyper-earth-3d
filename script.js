@@ -1,51 +1,38 @@
-// 1. Set your Cesium Ion Access Token
-// Replace the text inside the quotes with your actual token
+// 1. YOUR ION TOKEN
+// Replace the text below with your ACTUAL token from Cesium Ion
 Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI1ODQ2OTMyMi1hNTJlLTRlZGYtYmQ0Yy0yMjY3YzM2M2NkNGYiLCJpZCI6MzczOTE1LCJpYXQiOjE3NjcxNDI0Nzl9.2IhCmELrhjnjroboIctp_FKcVOcYh2lMVNlfyG9EPrQ';
 
-// 2. Initialize the Viewer
+// 2. INITIALIZE VIEWER
 const viewer = new Cesium.Viewer("cesiumContainer", {
   timeline: false,
   animation: false,
   sceneModePicker: false,
   baseLayerPicker: false,
-  // We use 'true' here to avoid the GeocodeProviderType crash
   geocoder: true, 
-  globe: false, // Required so we only see the Google 3D Tiles
+  globe: false, // Must be false for Google Tiles to display correctly
 });
 
-// Enable atmosphere/sky rendering
-viewer.scene.skyAtmosphere.show = true;
-
-// 3. Load the Google Photorealistic 3D Tileset
+// 3. LOAD TILES
 async function init() {
   try {
-    const tileset = await Cesium.createGooglePhotorealistic3DTileset({
-      // This allows the tileset to load properly
-      onlyUsingWithGoogleGeocoder: false, 
-    });
-    
+    // Calling this with empty brackets prevents the [object Object] error
+    const tileset = await Cesium.createGooglePhotorealistic3DTileset();
     viewer.scene.primitives.add(tileset);
 
-    // Remove the loading screen from the HTML once tiles load
-    const overlay = document.getElementById('loadingOverlay');
-    if (overlay) {
-      overlay.style.display = 'none';
-    }
+    // Hide the loading screen
+    const loader = document.getElementById('loadingOverlay');
+    if (loader) loader.style.display = 'none';
 
   } catch (error) {
     console.error(`Error loading tileset: ${error}`);
-    // If it fails, show the error on the screen
-    const overlay = document.getElementById('loadingOverlay');
-    if (overlay) {
-      overlay.innerHTML = "<h1>Error: Check Ion Token & Asset Depot</h1>";
-    }
+    const loader = document.getElementById('loadingOverlay');
+    if (loader) loader.innerHTML = "<h1>Error 400: Check Ion Assets</h1>";
   }
 }
 
-// Run the initialization
 init();
 
-// 4. Point the camera at the Googleplex
+// 4. SET CAMERA VIEW (Googleplex)
 viewer.scene.camera.setView({
   destination: new Cesium.Cartesian3(
     -2693797.551060477,
