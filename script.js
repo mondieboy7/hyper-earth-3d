@@ -1,4 +1,5 @@
 // 1. Set your Cesium Ion Access Token
+// Replace the text inside the quotes with your actual token
 Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI1ODQ2OTMyMi1hNTJlLTRlZGYtYmQ0Yy0yMjY3YzM2M2NkNGYiLCJpZCI6MzczOTE1LCJpYXQiOjE3NjcxNDI0Nzl9.2IhCmELrhjnjroboIctp_FKcVOcYh2lMVNlfyG9EPrQ';
 
 // 2. Initialize the Viewer
@@ -7,23 +8,25 @@ const viewer = new Cesium.Viewer("cesiumContainer", {
   animation: false,
   sceneModePicker: false,
   baseLayerPicker: false,
-  geocoder: geocoder: Cesium.GeocodeProviderType.GOOGLE,
-  globe: false, // Required for Photorealistic Tiles to look right
+  // We use 'true' here to avoid the GeocodeProviderType crash
+  geocoder: true, 
+  globe: false, // Required so we only see the Google 3D Tiles
 });
 
-// Enable atmosphere effects
+// Enable atmosphere/sky rendering
 viewer.scene.skyAtmosphere.show = true;
 
 // 3. Load the Google Photorealistic 3D Tileset
-async function initTileset() {
+async function init() {
   try {
     const tileset = await Cesium.createGooglePhotorealistic3DTileset({
-      onlyUsingWithGoogleGeocoder: true,
+      // This allows the tileset to load properly
+      onlyUsingWithGoogleGeocoder: false, 
     });
     
     viewer.scene.primitives.add(tileset);
 
-    // Remove the loading screen once tiles start appearing
+    // Remove the loading screen from the HTML once tiles load
     const overlay = document.getElementById('loadingOverlay');
     if (overlay) {
       overlay.style.display = 'none';
@@ -31,17 +34,18 @@ async function initTileset() {
 
   } catch (error) {
     console.error(`Error loading tileset: ${error}`);
+    // If it fails, show the error on the screen
     const overlay = document.getElementById('loadingOverlay');
     if (overlay) {
-      overlay.innerHTML = "<h1>Error: Check API Key and Console</h1>";
+      overlay.innerHTML = "<h1>Error: Check Ion Token & Asset Depot</h1>";
     }
   }
 }
 
-// Start the loading process
-initTileset();
+// Run the initialization
+init();
 
-// 4. Set Camera to the Googleplex (Your original coordinates)
+// 4. Point the camera at the Googleplex
 viewer.scene.camera.setView({
   destination: new Cesium.Cartesian3(
     -2693797.551060477,
